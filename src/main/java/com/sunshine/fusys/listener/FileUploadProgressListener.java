@@ -18,7 +18,7 @@ public class FileUploadProgressListener implements ProgressListener {
 
 	public FileUploadProgressListener() {  }  
 	
-    public FileUploadProgressListener(HttpSession session) {  
+    public FileUploadProgressListener(HttpSession session) {
         this.session=session;  
         Progress status = new Progress();
         session.setAttribute("upload_ps", status);  
