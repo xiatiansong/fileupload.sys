@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zqgame.zqad.mappers.AdSeatDao">
+
+   <!-- 新增-->
+	<insert id="save" parameterType="AdSeat">
+	  <![CDATA[ 
+	  		INSERT INTO ad_seat(
+	  			id,name,ad_media_id,flag
+	  		)VALUES(
+	  			DEFAULT,
+	  			#{adSeat.name},
+	  			#{adSeat.ad_media_id},
+	  			#{adSeat.flag}
+	  		)
+		 ]]>
+		 <selectKey keyProperty="adSeat.id" resultType="Long" order="AFTER">
+			select
+			LAST_INSERT_ID() AS ID
+		</selectKey> 
+	</insert>
+	 
+	<!-- 根据条件查询 -->
+	<select id="getAdSeatByMediaId" parameterType="java.util.Map" resultType="AdSeat"> 
+		<![CDATA[ 
+			select 
+       			id,name,ad_media_id,flag  
+          from  ad_seat 
+   		    WHERE ad_media_id = #{ad_media_id} and flag = #{flag}
+   			 ]]>
+   			  
+	</select>
+	
+	<!-- 更新 -->
+	<update id="update" parameterType="AdSeat">
+		<![CDATA[
+			UPDATE
+				ad_seat
+			SET
+				flag=#{adSeat.flag}
+			WHERE
+				id=#{adSeat.id}
+		]]>
+	</update>
+	
+</mapper>

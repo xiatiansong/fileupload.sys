@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zqgame.zqad.mappers.AdCostDao">
+
+   <!-- 新增-->
+	<insert id="save" parameterType="AdCost">
+	  <![CDATA[ 
+	  		INSERT INTO ad_cost(
+	  			id,
+	  			ad_cost,
+	  			type,
+	  			begin_time,
+	  			end_time,
+	  			ad_code_id,
+	  			created_at
+	  		)VALUES(
+	  			DEFAULT,
+	  			#{adCost.ad_cost},
+	  			#{adCost.type},
+	  			#{adCost.begin_time},
+	  			#{adCost.end_time},
+	  			#{adCost.ad_code_id},
+	  			#{adCost.created_at}
+	  		)
+		 ]]>
+		 <selectKey keyProperty="adCost.id" resultType="Long" order="AFTER">
+			select
+			LAST_INSERT_ID() AS ID
+		</selectKey> 
+	</insert>
+	
+		<!-- 根据batch_number与id修改 URL-->
+	<update id="update" parameterType="AdCost">
+		<![CDATA[ 
+		update ad_cost set 
+	  	end_time=#{adCost.end_time},`type`=#{adCost.type},ad_cost=#{adCost.ad_cost} 
+			WHERE 
+		id=#{adCost.id}
+		]]>
+	</update>
+	
+	<!-- 根据条件查询 -->
+	<select id="getDetailedListPage" parameterType="java.util.Map" resultType="java.util.Map"> 
+		<![CDATA[ 
+			select 
+       			batch_number,
+       			ad_material,
+       			ad_code,
+       			seat.name ad_seat,
+       			g.name game_id,
+       			area.name game_area_id,
+       			media.name media_name,
+       			orig.name orig_name,
+       			types.name type_name,
+       			url.url link,
+                cost.ad_cost ad_cost,
+                cost.begin_time begin_time,
+                cost.end_time end_time,
+                cost.type type, 
+                cost.id id 
+               	 
+          from 
+                ad_cost as cost 
+            left join 
+				ad_codes AS codes 
+            ON cost.ad_code_id = codes.id 
+            left join game g 
+        on g.id = codes.game_id 
+        left join game_area area 
+            on area.id = codes.game_area_id 
+			left JOIN 
+			    ad_media AS media 
+			ON codes.ad_media_id = media.id 
+        	left join 
+             	ad_originality as orig 
+        	on orig.id = codes.ad_origiality_id 
+        	left join ad_type as types 
+        	on codes.ad_type_id = types.id 
+        	left join location_urls url 
+       		on codes.location_domain_id = url.id 
+       		left join ad_seat seat 
+            on seat.id = codes.ad_seat 
+   		    WHERE 1=1  
+   			 ]]>
+
+		<if test="game_id != null and game_id != ''">
+   			<![CDATA[
+   				AND codes.game_id = #{game_id} 
+   			]]>
+		</if>
+
+		<if test="ad_media_id != null and ad_media_id != ''">
+	   			<![CDATA[
+	   				AND codes.ad_media_id = #{ad_media_id} 
+	   			]]>
+		</if>
+
+		<if test="ad_type_id != null and ad_type_id != ''">
+	   			<![CDATA[
+	   				AND codes.ad_type_id = #{ad_type_id} 
+	   			]]>
+		</if>
+
+		<if
+			test="ad_origiality_id != null and ad_origiality_id != ''">
+	   			<![CDATA[
+	   				AND codes.ad_origiality_id = #{ad_origiality_id} 
+	   			]]>
+		</if>
+
+		<if test="game_area_id != null and game_area_id != ''">
+	   			<![CDATA[
+	   				AND codes.game_area_id = #{game_area_id} 
+	   			]]>
+		</if>
+
+		<if test="ad_seat != null and ad_seat != ''">
+	   			<![CDATA[
+	   				AND codes.ad_seat = #{ad_seat} 
+	   			]]>
+		</if>
+
+		<if test="batch_number != null and batch_number != ''">
+	   			<![CDATA[
+	   				AND codes.batch_number = #{batch_number} 
+	   			]]>
+		</if>
+		
+		<if test="begin_time != null and begin_time != ''">
+	   			<![CDATA[
+	   				AND cost.begin_time <= #{begin_time} 
+	   			]]>
+		</if>
+		
+		<if test="end_time != null and end_time != ''">
+	   			<![CDATA[
+	   				AND cost.end_time >= #{end_time} 
+	   			]]>
+		</if>
+
+
+		<if test="sidx != null and sidx != ''">
+	   			<![CDATA[
+	   				order by ${sidx} 
+	   			]]>
+	   			
+	   			<if test="sord != null and sord != ''">
+	   			<![CDATA[
+	   				 ${sord} 
+	   			]]>
+		</if>
+		
+		</if>
+	</select>
+	<!-- 根据条件查询  导出-->
+	<select id="getDetailedList" parameterType="java.util.Map" resultType="java.util.Map"> 
+		<![CDATA[ 
+			select 
+       			batch_number,
+       			ad_material,
+       			ad_code,
+       			seat.name ad_seat,
+       			g.name game_id,
+       			area.name game_area_id,
+       			media.name media_name,
+       			orig.name orig_name,
+       			types.name type_name,
+       			url.url link,
+                cost.ad_cost ad_cost,
+                cost.begin_time begin_time,
+                cost.end_time end_time,
+                cost.type type, 
+                cost.id id 
+               	 
+          from 
+                ad_cost as cost 
+            left join 
+				ad_codes AS codes 
+            ON cost.ad_code_id = codes.id 
+            left join game g 
+        on g.id = codes.game_id 
+        left join game_area area 
+            on area.id = codes.game_area_id 
+			left JOIN 
+			    ad_media AS media 
+			ON codes.ad_media_id = media.id 
+        	left join 
+             	ad_originality as orig 
+        	on orig.id = codes.ad_origiality_id 
+        	left join ad_type as types 
+        	on codes.ad_type_id = types.id 
+        	left join location_urls url 
+       		on codes.location_domain_id = url.id 
+       		left join ad_seat seat 
+            on seat.id = codes.ad_seat 
+   		    WHERE 1=1  
+   			 ]]>
+
+		<if test="game_id != null and game_id != ''">
+   			<![CDATA[
+   				AND codes.game_id = #{game_id} 
+   			]]>
+		</if>
+
+		<if test="ad_media_id != null and ad_media_id != ''">
+	   			<![CDATA[
+	   				AND codes.ad_media_id = #{ad_media_id} 
+	   			]]>
+		</if>
+
+		<if test="ad_type_id != null and ad_type_id != ''">
+	   			<![CDATA[
+	   				AND codes.ad_type_id = #{ad_type_id} 
+	   			]]>
+		</if>
+
+		<if
+			test="ad_origiality_id != null and ad_origiality_id != ''">
+	   			<![CDATA[
+	   				AND codes.ad_origiality_id = #{ad_origiality_id} 
+	   			]]>
+		</if>
+
+		<if test="game_area_id != null and game_area_id != ''">
+	   			<![CDATA[
+	   				AND codes.game_area_id = #{game_area_id} 
+	   			]]>
+		</if>
+
+		<if test="ad_seat != null and ad_seat != ''">
+	   			<![CDATA[
+	   				AND codes.ad_seat = #{ad_seat} 
+	   			]]>
+		</if>
+
+		<if test="batch_number != null and batch_number != ''">
+	   			<![CDATA[
+	   				AND codes.batch_number = #{batch_number} 
+	   			]]>
+		</if>
+		
+		<if test="begin_time != null and begin_time != ''">
+	   			<![CDATA[
+	   				AND cost.begin_time <= #{begin_time} 
+	   			]]>
+		</if>
+		
+		<if test="end_time != null and end_time != ''">
+	   			<![CDATA[
+	   				AND cost.end_time >= #{end_time} 
+	   			]]>
+		</if>
+
+
+		<if test="sidx != null and sidx != ''">
+	   			<![CDATA[
+	   				order by ${sidx} 
+	   			]]>
+	   			
+	   			<if test="sord != null and sord != ''">
+	   			<![CDATA[
+	   				 ${sord} 
+	   			]]>
+		</if>
+		
+		</if>
+	</select>
+</mapper>

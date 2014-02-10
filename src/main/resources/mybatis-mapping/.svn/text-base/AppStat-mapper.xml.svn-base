@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zqgame.zqad.mappers.AppStatDao">
+	<!-- 获取单日所有渠道留存 -->
+	 <select id="getRetainedByDay" parameterType="java.util.Map" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+			SELECT IFNULL(ac.name, 'total') media_name,
+				       	  IFNULL(ac.ad_code, 'total') ad_code,
+				       	  sa.*
+				  FROM (SELECT IFNULL(sa.ad_code_id, 'total') ad_code_id,
+				               SUM(IF(sa.retain_type = 1, sa.retain_num, 0)) AS retain_num_1,
+				               SUM(IF(sa.retain_type = 3, sa.retain_num, 0)) AS retain_num_3,
+				               SUM(IF(sa.retain_type = 7, sa.retain_num, 0)) AS retain_num_7,
+				               SUM(IF(sa.retain_type = 30, sa.retain_num, 0)) AS retain_num_30
+				          FROM stat_app_retain_day sa
+				         WHERE 1 =1 
+		]]>
+		<if test="start_time != null and  start_time != '' and end_time != null  and end_time != '' and  start_time == end_time">
+	 		<![CDATA[
+	 			AND sa.basic_day = DATE_FORMAT(#{start_time}, '%Y-%m-%d')
+	 		]]>
+		</if>
+		<if test="start_time != null and  start_time != '' and end_time != null  and end_time != '' and  start_time != end_time">
+	 		<![CDATA[
+	 			AND sa.basic_day >= DATE_FORMAT(#{start_time}, '%Y-%m-%d')
+	 			AND sa.basic_day <= DATE_FORMAT(#{end_time}, '%Y-%m-%d')
+	 		]]>
+		</if>
+		<if test="ad_code_id != null and ad_code_id !='' ">
+   			<![CDATA[
+   				AND sa.ad_code_id = ${ad_code_id} 
+   			]]>
+		</if>
+		<![CDATA[
+						AND sa.game_id = #{game_id}
+				         GROUP BY sa.ad_code_id WITH ROLLUP) sa
+				  LEFT JOIN (SELECT ac.id, ac.ad_code, ac.ad_media_id, am.name FROM ad_codes ac
+				                       LEFT JOIN ad_media am ON ac.ad_media_id = am.id
+				                       WHERE ac.batch_number = #{batch_number} ) ac
+				   ON sa.ad_code_id = ac.id
+				  	ORDER BY media_name DESC,sa.ad_code_id ASC
+		]]>
+	</select>
+	
+	<!-- 查询渠道方安装数和注册数 -->
+	<select id="getSettlementStatByChannel" parameterType="java.util.Map"  resultType="java.util.LinkedHashMap">
+		<![CDATA[ 
+		   SELECT ac_media.media_name AS media_name, 
+						ac_media.ad_code AS ad_code, 
+						SUM(art.install_num) AS install_num, 
+						SUM(art.reg_num) AS reg_num 
+			FROM stat_app_install_reg_1day art
+			JOIN (SELECT ac.ad_media_id,ac.id AS ad_code_id,ac.ad_code AS ad_code,am.name AS media_name FROM ad_codes ac 
+						LEFT JOIN ad_media am ON am.id = ac.ad_media_id WHERE 1 = 1 
+		]]>
+		<if test="batch_number != null and batch_number !='' ">
+   			<![CDATA[
+   				AND ac.batch_number = ${batch_number} 
+   			]]>
+		</if>
+		<if test="ad_media_id != null and ad_media_id !='' ">
+   			<![CDATA[
+   				AND ac.ad_media_id = ${ad_media_id} 
+   			]]>
+		</if>
+		<![CDATA[) ac_media 
+				ON ac_media.ad_code_id = art.ad_code_id
+				WHERE 1 = 1
+				
+		]]>
+		<if test="start_time != null and start_time !='' ">
+   			<![CDATA[
+   					AND art.created_day >= #{start_time} 
+   			]]>
+		</if>
+		<if test="end_time != null and end_time !='' ">
+   			<![CDATA[
+   					AND art.created_day <= #{end_time} 
+   			]]>
+		</if>
+		<if test="app_id != null and app_id !='' ">
+   			<![CDATA[
+   					AND art.app_id = ${app_id} 
+   			]]>
+		</if>
+		<if test="ad_code_id != null and ad_code_id !='' ">
+   			<![CDATA[
+   					AND art.ad_code_id = ${ad_code_id} 
+   			]]>
+		</if>
+		<![CDATA[
+			GROUP BY ac_media.media_name, art.ad_code_id 
+			ORDER BY ac_media.media_name DESC,art.ad_code_id ASC
+		]]>
+	</select>
+	
+	<!-- 单渠道所有留存 -->
+	<select id="getRetainedByChannel" parameterType="java.util.Map" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+			SELECT * FROM(
+			SELECT IFNULL(ac.ad_code,'total_ad_code') ad_code,
+					     IFNULL(sa.basic_day,'total_basic_day') stat_day,
+						 SUM(IF(sa.retain_type=1,sa.retain_num,0)) AS retain_num_1,
+					 	SUM(IF(sa.retain_type=3,sa.retain_num,0)) AS retain_num_3,
+						SUM(IF(sa.retain_type=7,sa.retain_num,0)) AS retain_num_7,
+						SUM(IF(sa.retain_type=30,sa.retain_num,0)) AS retain_num_30
+						FROM stat_app_retain_day sa LEFT JOIN ad_codes ac ON sa.ad_code_id = ac.id
+						WHERE 1 = 1
+		]]>
+		<if test="start_time != null and  start_time != ''">
+	 		<![CDATA[
+	 			AND sa.basic_day >= DATE_FORMAT(#{start_time}, '%Y-%m-%d')
+	 		]]>
+		</if>
+		<if test="end_time != null  and end_time != ''">
+	 		<![CDATA[
+	 			AND sa.basic_day <= DATE_FORMAT(#{end_time}, '%Y-%m-%d')
+	 		]]>
+		</if>
+		<if test="game_id != null and game_id !='' ">
+   			<![CDATA[
+   				AND sa.game_id = ${game_id}
+   			]]>
+		</if>
+		<if test="ad_code_id != null and ad_code_id !='' ">
+   			<![CDATA[
+   				AND sa.ad_code_id = ${ad_code_id} 
+   			]]>
+		</if>
+		<if test="batch_number != null and batch_number !='' ">
+   			<![CDATA[
+   				AND ac.batch_number = ${batch_number} 
+   			]]>
+		</if>
+		<if test="ad_media_id != null and ad_media_id !='' ">
+   			<![CDATA[
+   				AND ac.ad_media_id = ${ad_media_id}
+   			]]>
+		</if>
+		<![CDATA[
+				GROUP BY ac.ad_code,sa.basic_day WITH ROLLUP) art
+				ORDER BY art.ad_code desc, art.stat_day ASC
+   		]]>
+	</select>
+	
+	<!-- 查询渠道方每天的安装数和注册数 -->
+	<select id="getSettlementStatByDay" parameterType="java.util.Map"  resultType="java.util.LinkedHashMap">
+		<![CDATA[
+			SELECT ac.ad_code, art.created_day, 
+						DATE_FORMAT(DATE_ADD(art.created_day, INTERVAL ${MINUS_DAY} DAY),'%Y-%m-%d') stat_day, 
+						SUM(art.install_num) AS install_num, 
+						SUM(art.reg_num) AS reg_num 
+			FROM stat_app_install_reg_1day art
+			LEFT JOIN ad_codes ac ON ac.id = art.ad_code_id 
+			WHERE  1 = 1
+		]]>
+		<if test="batch_number != null and batch_number !='' ">
+   			<![CDATA[
+   					AND ac.batch_number = ${batch_number}
+   			]]>
+		</if>
+		<if test="ad_media_id != null and ad_media_id !='' ">
+   			<![CDATA[
+   					AND ac.ad_media_id = ${ad_media_id} 
+   			]]>
+		</if>
+		<if test="start_time != null and start_time !='' ">
+   			<![CDATA[
+   				AND art.created_day >= #{start_time} 
+   			]]>
+		</if>
+		<if test="end_time != null and end_time !='' ">
+   			<![CDATA[
+   				AND art.created_day <= #{end_time} 
+   			]]>
+		</if>
+		<if test="app_id != null and app_id !='' ">
+   			<![CDATA[
+   				AND art.app_id = ${app_id} 
+   			]]>
+		</if>
+		<if test="ad_code_id != null and ad_code_id !='' ">
+   			<![CDATA[
+   				AND art.ad_code_id = ${ad_code_id} 
+   			]]>
+		</if>
+		<![CDATA[
+			 GROUP BY ac.ad_code, art.created_day 
+			ORDER BY ac.ad_code DESC, art.created_day ASC
+		 ]]>
+	</select>
+	
+	<!-- 查询所有渠道的充值和ARPU -->
+	<select id="getIncomeStatByAllChannel" parameterType="java.util.Map"  resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		   SELECT ac_media.media_name AS media_name, 
+						ac_media.ad_code AS ad_code, 
+						SUM(pa.person_amount) total_amount,
+						COUNT(1) person_num
+			FROM(SELECT par.ad_media_id, 
+			                        par.ad_code_id,
+			                        par.accounts,
+								    SUM(par.re_amount) person_amount
+						FROM pay_app_records par
+						WHERE 1 =  1 
+		]]>
+		<if test="start_time != null and start_time !='' ">
+   			<![CDATA[
+   				AND par.created_day >= DATE_FORMAT(DATE_SUB(#{start_time} ,INTERVAL ${MINUS_DAY} DAY), '%Y-%m-%d')
+   			]]>
+		</if>
+		<if test="end_time != null and end_time !='' ">
+   			<![CDATA[
+   				AND par.created_day <= DATE_FORMAT(DATE_SUB(#{end_time} ,INTERVAL ${MINUS_DAY} DAY), '%Y-%m-%d')
+   			]]>
+		</if>
+		<if test="game_id != null and game_id !='' ">
+   			<![CDATA[
+   				AND par.game_id = ${game_id}
+   			]]>
+		</if>
+		<if test="ad_code_id != null and ad_code_id !='' ">
+   			<![CDATA[
+   				AND par.ad_code_id = ${ad_code_id}
+   			]]>
+		</if>
+		<![CDATA[
+						GROUP BY par.ad_media_id, par.ad_code_id, par.accounts) pa
+						JOIN (SELECT ac.ad_media_id, ac.id AS ad_code_id, ac.ad_code AS ad_code, am.name AS media_name FROM ad_codes ac 
+								    LEFT JOIN ad_media am ON am.id = ac.ad_media_id WHERE 1 = 1 
+		]]>
+		<if test="batch_number != null and batch_number !='' ">
+   			<![CDATA[
+   				AND ac.batch_number = ${batch_number} 
+   			]]>
+		</if>
+		<if test="ad_media_id != null and ad_media_id !='' ">
+   			<![CDATA[
+   				AND ac.ad_media_id = ${ad_media_id}
+   			]]>
+		</if>
+		<![CDATA[) ac_media 
+						ON ac_media.ad_code_id = pa.ad_code_id
+						GROUP BY ac_media.media_name, pa.ad_code_id 
+						ORDER BY ac_media.media_name DESC,pa.ad_code_id ASC
+		]]>
+	</select>
+	
+	<!-- 查询单个渠道按天的充值和ARPU -->
+	<select id="getIncomeStatByDay" parameterType="java.util.Map"  resultType="java.util.LinkedHashMap">
+		<![CDATA[
+			SELECT ac.ad_code, pa.created_day,
+						 CASE DAYOFWEEK(pa.created_day)
+						          WHEN 2 THEN '星期一' WHEN 3 THEN '星期二' WHEN 4 THEN '星期三' WHEN 5 THEN '星期四' 
+						          WHEN 6 THEN '星期五' WHEN 7 THEN '星期六' ELSE '星期天'
+						 END  week_day,
+						 DATE_FORMAT(DATE_ADD(pa.created_day, INTERVAL ${MINUS_DAY} DAY),'%Y-%m-%d') stat_day, 
+						 SUM(pa.person_amount) total_amount,
+						 COUNT(1) person_num
+			FROM(
+						SELECT par.ad_code_id,
+						 			 par.created_day,
+						 			 par.accounts,
+									 SUM(par.re_amount) person_amount
+						FROM pay_app_records par
+						WHERE 1 = 1 
+		]]>
+   		<if test="start_time != null and start_time !='' ">
+   			<![CDATA[
+   				AND par.created_day >= DATE_FORMAT(DATE_SUB(#{start_time} ,INTERVAL ${MINUS_DAY} DAY), '%Y-%m-%d')
+   			]]>
+		</if>
+		<if test="end_time != null and end_time !='' ">
+   			<![CDATA[
+   				AND par.created_day <= DATE_FORMAT(DATE_SUB(#{end_time} ,INTERVAL ${MINUS_DAY} DAY), '%Y-%m-%d')
+   			]]>
+		</if>
+		<if test="game_id != null and game_id !='' ">
+   			<![CDATA[
+   				AND par.game_id = ${game_id}
+   			]]>
+		</if>
+		<if test="ad_code_id != null and ad_code_id !='' ">
+   			<![CDATA[
+   				AND par.ad_code_id = ${ad_code_id}
+   			]]>
+		</if>
+   		<![CDATA[
+				GROUP BY par.ad_code_id,par.created_day,par.accounts) pa
+				LEFT JOIN ad_codes ac ON ac.id = pa.ad_code_id 
+				WHERE 1 =1
+   		]]>
+   		<if test="batch_number != null and batch_number !='' ">
+   			<![CDATA[
+   				AND ac.batch_number = ${batch_number} 
+   			]]>
+		</if>
+		<if test="ad_media_id != null and ad_media_id !='' ">
+   			<![CDATA[
+   				AND ac.ad_media_id = ${ad_media_id}
+   			]]>
+		</if>
+   		<![CDATA[
+   			GROUP BY ac.ad_code ,pa.created_day
+			ORDER BY ac.ad_code DESC, pa.created_day ASC
+		]]>
+	</select>
+</mapper>

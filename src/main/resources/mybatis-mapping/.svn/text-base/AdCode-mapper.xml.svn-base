@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zqgame.zqad.mappers.AdCodeDao">
+
+	<!-- 新增 -->
+	<insert id="save" parameterType="AdCode">
+	  <![CDATA[ 
+			INSERT INTO ad_codes(
+       			id,
+       			game_id,
+       			location_domain_id,
+       			ad_media_id,
+       			ad_type_id,
+       			ad_origiality_id,
+       			game_area_id,
+       			ad_seat,
+       			ad_material,
+       			batch_number,
+       			ad_code
+   				)
+	    	VALUES(
+	    		DEFAULT,
+	    		#{adCode.game_id},
+				#{adCode.location_domain_id},
+				#{adCode.ad_media_id},
+				#{adCode.ad_type_id}, 
+				#{adCode.ad_origiality_id}, 
+				#{adCode.game_area_id},
+				#{adCode.ad_seat}, 
+				#{adCode.ad_material}, 
+				#{adCode.batch_number}, 
+				#{adCode.ad_code}
+				)
+		 ]]>
+		<selectKey keyProperty="adCode.id" resultType="Long" order="AFTER">
+			select
+			LAST_INSERT_ID() AS ID
+		</selectKey>
+	</insert>
+
+	<!-- 根据条件查询 -->
+	<select id="find" parameterType="AdCode" resultType="AdCode"> 
+		<![CDATA[ 
+			SELECT 
+				id,
+       			game_id,
+       			location_domain_id,
+       			ad_media_id,
+       			ad_type_id,ad_origiality_id,
+       			game_area_id,
+       			ad_seat,
+       			ad_material,
+       			batch_number,
+       			ad_code
+   		 	FROM
+   		        ad_codes  
+   		    WHERE 1=1 
+   			 ]]>
+		<if test="adCode!=null">
+			<if test="adCode.id != null and adCode.id != 0">
+	   			<![CDATA[
+	   				AND id = #{adCode.id} 
+	   			]]>
+			</if>
+			<if test="adCode.game_id != null and adCode.game_id != 0">
+	   			<![CDATA[
+	   				AND game_id = #{adCode.game_id} 
+	   			]]>
+			</if>
+			<if test="adCode.location_domain_id != null and adCode.location_domain_id !=0">
+	   			<![CDATA[
+	   				AND location_domain_id = #{adCode.location_domain_id} 
+	   			]]>
+			</if>
+			<if test="adCode.ad_media_id != null and adCode.ad_media_id !=0">
+	   			<![CDATA[
+	   				AND ad_media_id = #{adCode.ad_media_id} 
+	   			]]>
+			</if>
+			<if test="adCode.ad_type_id != null and adCode.ad_type_id !=0 ">
+	   			<![CDATA[
+	   				AND ad_type_id = #{adCode.ad_type_id} 
+	   			]]>
+			</if>
+			<if test="adCode.ad_origiality_id != null and adCode.ad_origiality_id != 0">
+	   			<![CDATA[
+	   				AND ad_origiality_id = #{adCode.ad_origiality_id} 
+	   			]]>
+			</if>
+			<if test="adCode.game_area_id != null and adCode.game_area_id !=0">
+	   			<![CDATA[
+	   				AND game_area_id = #{adCode.game_area_id} 
+	   			]]>
+			</if>
+			<if test="adCode.ad_seat != null">
+	   			<![CDATA[
+	   				AND ad_seat = #{adCode.ad_seat} 
+	   			]]>
+			</if>
+			<if test="adCode.ad_material != null">
+	   			<![CDATA[
+	   				AND ad_material = #{adCode.ad_material} 
+	   			]]>
+			</if>
+			<if test="adCode.batch_number != null and adCode.batch_number != ''">
+	   			<![CDATA[
+	   				AND batch_number = #{adCode.batch_number} 
+	   			]]>
+			</if>
+			<if test="adCode.ad_code != null and adCode.ad_code != ''">
+	   			<![CDATA[
+	   				AND ad_code = #{adCode.ad_code} 
+	   			]]>
+			</if>
+		</if>
+	</select>
+
+	<!-- 根据id修改 -->
+	 <update id="update" parameterType="AdCode">
+		<![CDATA[ 
+		update ad_codes set 
+	  	ad_media_id=#{adCode.ad_media_id}, 
+			ad_type_id=#{adCode.ad_type_id}, 
+			ad_origiality_id=#{adCode.ad_origiality_id}, 
+			game_area_id=#{adCode.game_area_id}, 
+			ad_seat=#{adCode.ad_seat}, 
+			ad_material=#{adCode.ad_material} 
+			WHERE id=#{adCode.id}
+			]]>
+	</update>
+	
+	<!-- 根据batch_number与id修改 URL-->
+	<update id="updateUrl" parameterType="AdCode">
+		<![CDATA[ 
+		update ad_codes set 
+	  location_domain_id=#{adCode.location_domain_id} 
+			WHERE id=#{adCode.id} and batch_number=#{adCode.batch_number} 
+			]]>
+	</update>
+	 
+	 <!-- 根据条件查询广告码和媒体 -->
+	<select id="queryAdCodeList" parameterType="AdCode" resultType="java.util.Map"> 
+	 <![CDATA[ 
+	 	SELECT ac.id, ac.game_id , ac.batch_number, ac.ad_code, am.id as media_id,am.name as media_name FROM ad_codes ac,ad_media am 
+		WHERE ac.ad_media_id = am.id
+	  ]]>
+	  <if test="adCode.game_id != null">
+   			<![CDATA[
+   			AND ac.game_id = #{adCode.game_id} 
+   			]]>
+	   </if>
+   		<if test="adCode.batch_number != null">
+   			<![CDATA[
+   			AND ac.batch_number = #{adCode.batch_number} 
+   			]]>
+	   </if>
+	   <if test="adCode.ad_media_id != null">
+   			<![CDATA[
+   			AND ac.ad_media_id = #{adCode.ad_media_id} 
+   			]]>
+	   </if>
+	</select>
+
+	<!-- 根据条件查询 -->
+	<select id="findByNumber" parameterType="AdCode" resultType="java.util.Map"> 
+		<![CDATA[ 
+			SELECT  count(1) number,batch_number  FROM ad_codes WHERE 1=1 
+   			 ]]>
+		<if test="adCode.batch_number != null and adCode.batch_number != '' ">
+   			<![CDATA[
+   			AND batch_number = #{adCode.batch_number}  
+   			]]>
+		</if>
+		<if test="adCode.game_id != null">
+   			<![CDATA[
+   			AND game_id = #{adCode.game_id} 
+   			]]>
+		</if>
+   			
+   			<![CDATA[
+   			group by batch_number 
+   			]]>
+
+	</select>
+
+	<!-- 根据条件查询 -->
+	<select id="getAdviewListPage" parameterType="AdCode"  resultType="java.util.Map"> 
+		<![CDATA[ 
+			select 
+       			codes.id ,
+       			batch_number,
+       			ad_material,
+       			ad_code,
+       			seat.name ad_seat,
+       			g.name `game_id`,
+       			area.name `game_area_id`,
+       			media.name media_name,
+       			orig.name orig_name,
+       			types.name type_name,
+       			url.url link 
+ 			from 
+				ad_codes AS codes 
+			left JOIN 
+			    ad_media AS media 
+			ON codes.ad_media_id = media.id 
+        	left join 
+             	ad_originality as orig 
+        	on orig.id = codes.ad_origiality_id 
+        	left join ad_type as types 
+        	on codes.ad_type_id = types.id 
+        	left join location_urls url 
+       		on codes.location_domain_id = url.id 
+       		left join game g 
+            on g.id = codes.game_id 
+            left join game_area area 
+            on area.id = codes.game_area_id 
+            left join ad_seat seat 
+            on seat.id = codes.ad_seat 
+   		    WHERE 1=1 
+   			 ]]>
+		<if test="adCode.id != null and adCode.id != ''">
+   			<![CDATA[
+   				AND id = #{adCode.id} 
+   			]]>
+		</if>
+		<if test="adCode.game_id != null and adCode.game_id != ''">
+   			<![CDATA[
+   				AND codes.game_id = #{adCode.game_id} 
+   			]]>
+		</if>
+
+		<if
+			test="adCode.location_domain_id != null and adCode.location_domain_id != ''">
+	   			<![CDATA[
+	   				AND location_domain_id = #{adCode.location_domain_id} 
+	   			]]>
+		</if>
+
+		<if test="adCode.ad_media_id != null and adCode.ad_media_id != ''">
+	   			<![CDATA[
+	   				AND ad_media_id = #{adCode.ad_media_id} 
+	   			]]>
+		</if>
+
+		<if test="adCode.ad_type_id != null and adCode.ad_type_id != ''">
+	   			<![CDATA[
+	   				AND ad_type_id = #{adCode.ad_type_id} 
+	   			]]>
+		</if>
+
+		<if
+			test="adCode.ad_origiality_id != null and adCode.ad_origiality_id != ''">
+	   			<![CDATA[
+	   				AND ad_origiality_id = #{adCode.ad_origiality_id} 
+	   			]]>
+		</if>
+
+		<if test="adCode.game_area_id != null and adCode.game_area_id != ''">
+	   			<![CDATA[
+	   				AND codes.game_area_id = #{adCode.game_area_id} 
+	   			]]>
+		</if>
+
+		<if test="adCode.ad_seat != null and adCode.ad_seat != ''">
+	   			<![CDATA[
+	   				AND ad_seat = #{adCode.ad_seat} 
+	   			]]>
+		</if>
+
+		<if test="adCode.ad_material != null and adCode.ad_material != ''">
+	   			<![CDATA[
+	   				AND ad_material = #{adCode.ad_material} 
+	   			]]>
+		</if>
+
+
+		<if test="adCode.batch_number != null and adCode.batch_number != ''">
+	   			<![CDATA[
+	   				AND batch_number = #{adCode.batch_number} 
+	   			]]>
+		</if>
+
+		<if test="adCode.ad_code != null and adCode.ad_code != ''">
+	   			<![CDATA[
+	   				AND ad_code = #{adCode.ad_code} 
+	   			]]>
+		</if>
+
+		<if test="adCode.sidx != null and adCode.sidx != ''">
+	   			<![CDATA[
+	   				order by ${adCode.sidx} 
+	   			]]>
+	   			<if test="adCode.sord != null and adCode.sord != ''">
+	   			<![CDATA[
+	   				 ${adCode.sord} 
+	   			]]>
+		</if>
+		</if>
+
+		
+	</select>
+
+
+<!-- 导出用 -->
+	<select id="getAdviewList" parameterType="AdCode"
+		resultType="java.util.Map"> 
+		<![CDATA[ 
+			select 
+       			codes.id ,
+       			batch_number,
+       			ad_material,
+       			ad_code,
+       			seat.name ad_seat,
+       			g.name `game_id`,
+       			area.name `game_area_id`,
+       			media.name media_name,
+       			orig.name orig_name,
+       			types.name type_name,
+       			url.url link 
+ 			from 
+				ad_codes AS codes 
+			left JOIN 
+			    ad_media AS media 
+			ON codes.ad_media_id = media.id 
+        	left join 
+             	ad_originality as orig 
+        	on orig.id = codes.ad_origiality_id 
+        	left join ad_type as types 
+        	on codes.ad_type_id = types.id 
+        	left join location_urls url 
+       		on codes.location_domain_id = url.id 
+       		left join game g 
+            on g.id = codes.game_id 
+            left join game_area area 
+            on area.id = codes.game_area_id 
+            left join ad_seat seat 
+            on seat.id = codes.ad_seat 
+   		    WHERE 1=1 
+   			 ]]>
+		<if test="adCode.id != null and adCode.id != ''">
+   			<![CDATA[
+   				AND id = #{adCode.id} 
+   			]]>
+		</if>
+		<if test="adCode.game_id != null and adCode.game_id != ''">
+   			<![CDATA[
+   				AND codes.game_id = #{adCode.game_id} 
+   			]]>
+		</if>
+
+		<if
+			test="adCode.location_domain_id != null and adCode.location_domain_id != ''">
+	   			<![CDATA[
+	   				AND location_domain_id = #{adCode.location_domain_id} 
+	   			]]>
+		</if>
+
+		<if test="adCode.ad_media_id != null and adCode.ad_media_id != ''">
+	   			<![CDATA[
+	   				AND ad_media_id = #{adCode.ad_media_id} 
+	   			]]>
+		</if>
+
+		<if test="adCode.ad_type_id != null and adCode.ad_type_id != ''">
+	   			<![CDATA[
+	   				AND ad_type_id = #{adCode.ad_type_id} 
+	   			]]>
+		</if>
+
+		<if
+			test="adCode.ad_origiality_id != null and adCode.ad_origiality_id != ''">
+	   			<![CDATA[
+	   				AND ad_origiality_id = #{adCode.ad_origiality_id} 
+	   			]]>
+		</if>
+
+		<if test="adCode.game_area_id != null and adCode.game_area_id != ''">
+	   			<![CDATA[
+	   				AND codes.game_area_id = #{adCode.game_area_id} 
+	   			]]>
+		</if>
+
+		<if test="adCode.ad_seat != null and adCode.ad_seat != ''">
+	   			<![CDATA[
+	   				AND ad_seat = #{adCode.ad_seat} 
+	   			]]>
+		</if>
+
+		<if test="adCode.ad_material != null and adCode.ad_material != ''">
+	   			<![CDATA[
+	   				AND ad_material = #{adCode.ad_material} 
+	   			]]>
+		</if>
+
+
+		<if test="adCode.batch_number != null and adCode.batch_number != ''">
+	   			<![CDATA[
+	   				AND batch_number = #{adCode.batch_number} 
+	   			]]>
+		</if>
+
+		<if test="adCode.ad_code != null and adCode.ad_code != ''">
+	   			<![CDATA[
+	   				AND ad_code = #{adCode.ad_code} 
+	   			]]>
+		</if>
+
+		<if test="adCode.sidx != null and adCode.sidx != ''">
+	   			<![CDATA[
+	   				order by ${adCode.sidx} 
+	   			]]>
+		</if>
+
+		<if test="adCode.sord != null and adCode.sord != ''">
+	   			<![CDATA[
+	   				 ${adCode.sord} 
+	   			]]>
+		</if>
+	</select>
+
+	<!-- 根据条件查询 -->
+	<select id="getBatchListPage" parameterType="AdCode" resultType="java.util.Map"> 
+		<![CDATA[ 
+		select codes.id id,batch_number,count(1) `count`,game_id,g.name game_name,url.url url from ad_codes codes 
+		left join location_urls url 
+		on codes.location_domain_id = url.id 
+		left join game g 
+        on g.id = codes.game_id 
+		where 1 = 1 
+   			 ]]>
+		<if test="adCode.batch_number != null and adCode.batch_number != ''">
+	   			<![CDATA[
+	   				AND batch_number = #{adCode.batch_number} 
+	   			]]>
+		</if>
+
+		<if test="adCode.game_id != null and adCode.game_id != ''">
+	   			<![CDATA[
+	   				AND game_id = #{adCode.game_id} 
+	   			]]>
+		</if>
+   			
+   			<![CDATA[
+	   			group by batch_number 
+	   		]]>
+
+		<if test="adCode.sidx != null and adCode.sidx != ''">
+	   			<![CDATA[
+	   				order by ${adCode.sidx} 
+	   			]]>
+	   			
+	   			<if test="adCode.sord != null and adCode.sord != ''">
+	   			<![CDATA[
+	   				 ${adCode.sord} 
+	   			]]>
+		</if>
+		</if>
+	</select>
+	
+	<select id="getAdCodeListByConditions" parameterType="AdCode" resultType="java.util.Map">
+		<![CDATA[
+			 SELECT id,ad_code FROM ad_codes
+			 WHERE 1=1 
+		]]>
+		<if test="adCode.game_id != null and adCode.game_id != ''">
+	   			<![CDATA[
+	   				AND game_id = #{adCode.game_id} 
+	   			]]>
+		</if>
+		<if test="adCode.batch_number != null and adCode.batch_number != ''">
+	   			<![CDATA[
+	   				AND batch_number = #{adCode.batch_number} 
+	   			]]>
+		</if>
+	</select>
+</mapper>

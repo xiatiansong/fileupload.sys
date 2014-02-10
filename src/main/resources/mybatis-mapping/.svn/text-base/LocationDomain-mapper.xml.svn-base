@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zqgame.zqad.mappers.LocationDomainDao">
+
+	<!-- 新增 -->
+	<insert id="save" parameterType="LocationDomain">
+	  <![CDATA[ 
+			INSERT INTO location_domains(
+       			id,url,md5
+   				)
+	    	VALUES(
+	    		DEFAULT,
+				#{locationDomain.url},
+				#{locationDomain.md5}
+				)
+		 ]]>
+		<selectKey keyProperty="locationDomain.id" resultType="Long"
+			order="AFTER">
+			select
+			LAST_INSERT_ID() AS ID
+		</selectKey>
+	</insert>
+
+	<!-- 根据条件查询 -->
+	<select id="getLocationDomainByMd5" parameterType="java.lang.String"
+		resultType="LocationDomain"> 
+		<![CDATA[ 
+			SELECT 
+				id,
+       			url,
+       			md5
+   		 	FROM
+   		        location_domains 
+   		    WHERE
+   		    	md5 = #{md5} 
+   		    Limit 1
+   			 ]]>
+	</select>
+
+	<select id="find" resultType="LocationDomain" parameterType="LocationDomain">
+		<![CDATA[
+			SELECT
+				id,
+				url,
+				md5,
+				created_at,
+				updated_at
+			FROM
+				location_domains
+		]]>
+		<if test="locationDomain != null">
+			<if test="locationDomain.id!=null and locationDomain.id!=0">
+				<![CDATA[
+					AND id=#{locationDomain.id}
+				]]>
+			</if>
+			<if test="locationDomain.url!=null and locationDomain.url!=''">
+				<![CDATA[
+					AND url=#{locationDomain.url}
+				]]>
+			</if>
+			<if test="locationDomain.md5!=null and locationDomain.md5!=''">
+				<![CDATA[
+					AND url=#{locationDomain.md5}
+				]]>
+			</if>
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zqgame.zqad.mappers.GameDao">
+
+   <!-- 新增-->
+	<insert id="save" parameterType="com.zqgame.zqad.models.Game">
+	  <![CDATA[ 
+	  		INSERT INTO game(
+	  			id,name,url,type,nick_name,state
+	  		)VALUES(
+	  			#{game.id},
+	  			#{game.name},
+	  			#{game.url},
+	  			#{game.type},
+	  			#{game.nick_name},
+	  			#{game.state}
+	  		)
+		 ]]>
+	</insert>
+	 
+	 <!-- 修改游戏url -->
+	 <update id="updateGameUrl"  parameterType="com.zqgame.zqad.models.Game">
+	 	 <![CDATA[ 
+	 	 	update game g set g.url = #{game.url} where g.id = #{game.id}
+	 	 ]]>
+	 </update>
+	 
+	<!-- 查询所有 这是为了存放缓存 -->
+	<select id="find"  resultType="com.zqgame.zqad.models.Game"> 
+		<![CDATA[ 
+			select 
+       			id,name,url,type,state 
+          from 
+               game
+   			 ]]>
+	</select>
+	
+	<!-- 根据条件查询 -->
+	<select id="findGameById" parameterType="String" resultType="com.zqgame.zqad.models.Game"> 
+		<![CDATA[ 
+			select 
+       			id,name,url,type,state 
+          from 
+               game 
+          where id = #{id} 
+          Limit 1
+   			 ]]>
+	</select>
+</mapper>

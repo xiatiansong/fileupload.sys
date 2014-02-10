@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zqgame.zqad.mappers.ReferrerDomainDao">
+
+   	<!-- 新增-->
+	<insert id="save" parameterType="ReferrerDomain">
+	  <![CDATA[ 
+			INSERT INTO referrer_domains(
+       			id,
+       			url,
+       			title,
+       			md5
+   				)
+	    	VALUES(
+	    		DEFAULT,
+	    		#{referrerDomain.url},
+	    		#{referrerDomain.title}, 
+				#{referrerDomain.md5}
+				)
+		 ]]>
+		 <selectKey keyProperty="referrerDomain.id" resultType="Long" order="AFTER">
+			select
+			LAST_INSERT_ID() AS ID
+		</selectKey> 
+	</insert>
+	
+	<!-- 根据条件查询  -->
+	<select id="getReferrerDomainByMd5" parameterType="java.lang.String" resultType="ReferrerDomain"> 
+		<![CDATA[ 
+			SELECT 
+				id,
+       			url,
+       			title,
+       			md5
+   		 	FROM
+   		        referrer_domains 
+   		    WHERE
+   		    	md5 = #{md5} 
+   		    Limit 1
+   			 ]]> 
+	</select>
+	
+	<select id="find" resultType="ReferrerDomain" parameterType="ReferrerDomain">
+		<![CDATA[
+			SELECT
+				id,
+				url,
+				title,
+				md5,
+				created_at,
+				updated_at
+			FROM
+				referrer_domains
+		]]>
+		<if test="referrerDomain!=null">
+			<if test="referrerDomain.id!=null and referrerDomain.id!=0">
+				<![CDATA[
+					AND id=#{referrerDomain.id}
+				]]>
+			</if>
+			<if test="referrerDomain.url!=null and referrerDomain.url!=''">
+				<![CDATA[
+					AND url=#{referrerDomain.url}
+				]]>
+			</if>
+			<if test="referrerDomain.title!=null and referrerDomain.title!=''">
+				<![CDATA[
+					AND title=#{referrerDomain.title}
+				]]>
+			</if>
+			<if test="referrerDomain.md5!=null and referrerDomain.md5!=''">
+				<![CDATA[
+					AND md5=#{referrerDomain.md5}
+				]]>
+			</if>
+		</if>
+	</select>
+	
+</mapper>
