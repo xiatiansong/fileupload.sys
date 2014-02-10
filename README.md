@@ -1,4 +1,4 @@
-l，框架采用spring mvc + mybatis
+1、框架采用spring mvc + mybatis
 2、初始化数据脚本fileupload.sys\src\main\resources\init.sql
    数据库配置文件fileupload.sys\src\main\resources\jdbc.properties
    log4j配置文件fileupload.sys\src\main\resources\log4j.properties，log4j采用分错误级别进行记录日志，比如错误日志只需要在fusys_error.log下找
