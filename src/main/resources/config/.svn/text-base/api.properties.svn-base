@@ -1,0 +1,9 @@
+#\u6E38\u620F\u5730\u5740
+GAME_URL=http://admin.zqgame.com:9009/api/querygame
+#\u6E38\u620F\u5927\u533A\u5730\u5740
+GAME_AREA_URL=http://admin.zqgame.com:9009/api/queryarea
+
+#\u767B\u5F55
+LOGIN_URL=http://auth.zqgame.com/userlogin?
+SYSTEM_NO=2002
+

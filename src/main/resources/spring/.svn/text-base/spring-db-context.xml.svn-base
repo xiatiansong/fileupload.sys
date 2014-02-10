@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd 
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<aop:aspectj-autoproxy />
+	<bean id="dataSourceInterceptor" class="com.zqgame.zqad.interceptors.DataSourceInterceptor"></bean>
+
+	<bean
+		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"></bean>
+	<!-- 读写分离 End -->
+
+	<!--配置和创建jdbc数据源 -->
+	<context:property-placeholder location="classpath:jdbc.properties"
+		ignore-unresolvable="true" />
+
+	<bean id="dataSource" class="com.zqgame.zqad.datasource.DynamicDataSource">
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<entry key="WRITE" value-ref="writeDataSource" />
+				<entry key="READ" value-ref="readDataSource" />
+			</map>
+		</property>
+		<!-- 默认的数据源 -->
+		<property name="defaultTargetDataSource" ref="writeDataSource" />
+	</bean>
+
+	<bean id="writeDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${driverClass}" />
+		<property name="jdbcUrl" value="${url}" />
+		<property name="user" value="${username}" />
+		<property name="password" value="${password}" />
+        <property name="acquireIncrement" value="${acquireIncrement}" />  
+        <property name="acquireRetryAttempts" value="${acquireRetryAttempts}" />  
+        <property name="acquireRetryDelay" value="${acquireRetryDelay}" />  
+        <property name="autoCommitOnClose" value="${autoCommitOnClose}" />  
+        <property name="breakAfterAcquireFailure" value="${breakAfterAcquireFailure}"/>  
+        <property name="checkoutTimeout" value="${checkoutTimeout}" />  
+        <property name="initialPoolSize" value="${initialPoolSize}" />  
+        <property name="maxIdleTime" value="${maxIdleTime}" />  
+        <property name="maxPoolSize" value="${maxPoolSize}" />  
+        <property name="maxStatements" value="${maxStatements}" />  
+        <property name="maxStatementsPerConnection" value="${maxStatementsPerConnection}" />  
+        <property name="numHelperThreads" value="${numHelperThreads}" />  
+        <property name="propertyCycle" value="${propertyCycle}" />
+	</bean>
+
+	<bean id="readDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${read.driverClass}" />
+		<property name="jdbcUrl" value="${read.url}" />
+		<property name="user" value="${read.username}" />
+		<property name="password" value="${read.password}" />
+		<property name="acquireIncrement" value="${acquireIncrement}" />  
+        <property name="acquireRetryAttempts" value="${acquireRetryAttempts}" />  
+        <property name="acquireRetryDelay" value="${acquireRetryDelay}" />  
+        <property name="autoCommitOnClose" value="${autoCommitOnClose}" />  
+        <property name="breakAfterAcquireFailure" value="${breakAfterAcquireFailure}"/>  
+        <property name="checkoutTimeout" value="${checkoutTimeout}" />  
+        <property name="initialPoolSize" value="${initialPoolSize}" />  
+        <property name="maxIdleTime" value="${maxIdleTime}" />  
+        <property name="maxPoolSize" value="${maxPoolSize}" />  
+        <property name="maxStatements" value="${maxStatements}" />  
+        <property name="maxStatementsPerConnection" value="${maxStatementsPerConnection}" />  
+        <property name="numHelperThreads" value="${numHelperThreads}" />  
+        <property name="propertyCycle" value="${propertyCycle}" />
+	</bean>
+
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- myibatis配置，使其支持注解和配置文件形式 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis.xml" />
+		<property name="typeAliasesPackage" value="com.zqgame.zqad.models" />
+		<property name="mapperLocations" value="classpath:mybatis-mapping/*mapper.xml" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.zqgame.zqad.mappers" />
+	</bean>
+	<!-- 使用spring全注解方式管理申明式事务 但数据表引擎必须为InnoDB -->
+	<tx:annotation-driven transaction-manager="txManager" />
+	<!-- 使用spring全注解扫描services层 -->
+	<context:component-scan base-package="com.zqgame.zqad.services" />
+	<!-- <context:annotation-config /> -->
+
+	<!-- spring mvc session级别国际化配置 -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>ValidationMessages</value>
+			</list>
+		</property>
+		<property name="useCodeAsDefaultMessage" value="true" />
+	</bean>
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+		<property name="defaultLocale" value="zh_CN"></property>
+	</bean>
+	<bean id="className"
+		class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
+			</list>
+		</property>
+	</bean>
+	<!-- spring mvc注解校验配置 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="webBindingInitializer">
+			<bean
+				class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
+				<property name="validator" ref="validator" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator"></property>
+	</bean>
+</beans>

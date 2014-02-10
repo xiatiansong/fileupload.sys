@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+		<setting name="cacheEnabled" value="false" />
+		<setting name="useGeneratedKeys" value="true" />
+		<setting name="defaultExecutorType" value="REUSE" />
+	</settings>
+	
+	<plugins>
+		<plugin interceptor="org.noo.pagination.interceptor.PaginationInterceptor">
+			<property name="dialectClass" value="org.noo.pagination.dialect.db.MySQLDialect" />
+			<property name="sqlPattern" value=".*Page.*" />
+			<property name="noPagingPattern" value=".*NoPage.*" />
+		</plugin>
+	</plugins>
+</configuration>

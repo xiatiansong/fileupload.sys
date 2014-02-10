@@ -1,0 +1,54 @@
+﻿@charset "utf-8";
+/* CSS Document */
+
+/*------------------- reset -------------------*/
+body {padding: 0; margin: 0; font: 12px/160% Arial, Helvetica, sans-serif, "SimSun";}
+ul,ol,li,p,h1,h2,h3,h4,h5,h6,dl,dt,dd,form,input,i,textarea,td,th {padding: 0; margin: 0; font-size: 12px; font-weight: normal;}
+ul,ol {list-style: none;}
+img {border: 0; vertical-align: top;}
+em,i {font-style: normal;}
+table {border-collapse: collapse; border-spacing: 0;}
+
+/*------------------- clearfix -------------------*/
+.clearfix:after {content: ""; display: block; height: 0; clear: both;}
+.clearfix {min-height: 1px;}
+* html .clearfix {height: 1px;}
+
+/*------------------- link -------------------*/
+a {text-decoration: none;}
+a:hover {text-decoration: underline;}
+
+.fl{float:left}
+.fr{float:right}
+
+/*------------------- text -------------------*/
+.f14 {font-size:14px;}
+.f16 {font-size:16px;}
+.f20 {font-size:20px;}
+.fb {font-weight: bold;}
+.bw{word-wrap:break-word}
+.ba{word-break:break-all}
+
+/*------------------- margin -------------------*/
+.m10 {margin: 10px;}
+.m20 {margin: 20px;}
+.mt10 {margin-top: 10px;}
+.mt20 {margin-top: 20px;}
+.mb10 {margin-bottom: 10px;}
+.mb20 {margin-bottom: 20px;}
+.ml10 {margin-left: 10px;}
+.ml20 {margin-left: 20px;}
+.mr10 {margin-right: 10px;}
+.mr20 {margin-right: 20px;}
+
+/*------------------- padding -------------------*/
+.p10 {padding: 10px;}
+.p20 {padding: 20px;}
+.pt10 {padding-top: 10px;}
+.pt20 {padding-top: 20px;}
+.pb10 {padding-bottom: 10px;}
+.pb20 {padding-bottom: 20px;}
+.pl10 {padding-left: 10px;}
+.pl20 {padding-left: 20px;}
+.pr10 {padding-right: 10px;}
+.pr20 {padding-right: 20px;}
