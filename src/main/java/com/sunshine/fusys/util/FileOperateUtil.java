@@ -126,7 +126,6 @@ public class FileOperateUtil {
 											 String contentType,
 											 String filePath,
 											 String fileName) throws IOException {
-		response.setContentType("text/html;charset=UTF-8");
 		request.setCharacterEncoding("UTF-8");
 		BufferedInputStream bis = null;
 		BufferedOutputStream bos = null;
