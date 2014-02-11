@@ -1,13 +1,24 @@
 package com.sunshine.fusys.util;
 
+import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
+import com.sunshine.fusys.common.CommonConstant;
+import com.sunshine.fusys.enums.CommonStateEnum;
+import com.sunshine.fusys.exception.BusinessException;
 
 /**
  * 
@@ -17,19 +28,23 @@ import org.apache.commons.logging.LogFactory;
  */
 public class EncryptionUtil {
 
-	private static Log LOG = LogFactory.getLog(EncryptionUtil.class);
+	private static Log log = LogFactory.getLog(EncryptionUtil.class);
+
+	private static final Object LOCK = new Object();
 
 	/** 定义 加密算法 */
 	private static String ENCRYPT_MODE = "DES";
+
 	/** 默认的密钥 */
 	private static String DEFAULT_KEY = "e2s5";
+
 	/** 加密密文 */
 	private static Cipher encryptCipher = null;
+
 	/** 解密密文 */
 	private static Cipher decryptCipher = null;
 
-	private static char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7',
-			'8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+	private static char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
 	private static EncryptionUtil encryp = null;
 
@@ -43,17 +58,20 @@ public class EncryptionUtil {
 			decryptCipher = Cipher.getInstance(ENCRYPT_MODE);
 			decryptCipher.init(Cipher.DECRYPT_MODE, key);
 		} catch (Exception e) {
-			LOG.error("产生加密的密钥失败", e);
+			log.error("产生加密的密钥失败", e);
 		}
 	}
-	
+
 	/**
-	 * 
-	 * 功能说明：返回Encryption的单实例，并且采用默认的加密密钥。 参数及返回值:
+	 * 返回Encryption的单实例，并且采用默认的加密密钥。
 	 */
 	public static EncryptionUtil getInstance() {
 		if (encryp == null) {
-			encryp = new EncryptionUtil();
+			synchronized (LOCK) {
+				if (encryp == null) {
+					encryp = new EncryptionUtil();
+				}
+			}
 		}
 		return encryp;
 	}
@@ -64,7 +82,11 @@ public class EncryptionUtil {
 	 */
 	public static EncryptionUtil getInstance(String key) {
 		if (encryp == null) {
-			encryp = new EncryptionUtil(key);
+			synchronized (LOCK) {
+				if (encryp == null) {
+					encryp = new EncryptionUtil(key);
+				}
+			}
 		}
 		return encryp;
 	}
@@ -83,13 +105,63 @@ public class EncryptionUtil {
 			decryptCipher = Cipher.getInstance(ENCRYPT_MODE);
 			decryptCipher.init(Cipher.DECRYPT_MODE, key);
 		} catch (Exception e) {
-			LOG.error("产生加密的密钥失败", e);
+			log.error("产生加密的密钥失败", e);
 		}
 	}
 
 	/**
 	 * 
+	 * 对输入的字符串进行加密
+	 */
+	public static String encode(String input) throws Exception {
+		if (input == null || "".equals(input)) {
+			return input;
+		}
+		return byteArr2HexStr(encode(input.getBytes()));
+	}
+
+	/**
+	 * 
+	 * 对输入的字符串进行解密
+	 */
+	public static String decode(String input) throws Exception {
+		if (input == null || "".equals(input)) {
+			return input;
+		}
+		return new String(decode(hexStr2ByteArr(input)));
+	}
+
+	/**
+	 * md5加密
+	 */
+	public static String md5(String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+		if (password == null) {
+			return null;
+		}
+
+		byte[] temp = password.getBytes(CommonConstant.UTF_8);
+		MessageDigest digest = MessageDigest.getInstance("MD5");
+		digest.update(temp);
+
+		byte[] md = digest.digest();
+		int length = md.length;
+		char buffer[] = new char[length * 2];
+		int k = 0;
+		for (int i = 0; i < length; i++) {
+			byte byte0 = md[i];
+			buffer[k++] = hexDigits[byte0 >>> 4 & 0xf];
+			buffer[k++] = hexDigits[byte0 & 0xf];
+		}
+		return new String(buffer);
+
+	}
+
+	/**
+	 * 
 	 * 功能说明：产生加密的密钥 参数及返回值:
+	 * 
+	 * @return
+	 * @throws BmException
 	 */
 	private static Key getKey(byte[] arrBTmp) throws Exception {
 		// 创建一个空的8位字节数组（默认值为0）
@@ -114,69 +186,32 @@ public class EncryptionUtil {
 	 * 对输入的字节进行解密
 	 * 
 	 * @param input
+	 * @param key
+	 * @return
+	 * @throws Exception
 	 */
-	protected static byte[] decode(byte[] input) {
-		try {
-			byte[] decrpyByte = decryptCipher.doFinal(input);
-			return decrpyByte;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	/**
-	 * 功能说明：对输入的字符串进行解密 参数及返回值:
-	 */
-	public static String decode(String input) {
-		try {
-			if (input == null || "".equals(input)) {
-				return input;
-			} else {
-				return new String(decode(hexStr2ByteArr(input)));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return input;
+	private static byte[] decode(byte[] input) throws Exception {
+		return decryptCipher.doFinal(input);
 	}
 
 	/**
 	 * 对输入的字节进行加密
-	 * @param input
-	 */
-	protected static byte[] encode(byte[] input) {
-		try {
-			byte[] enrypByte = encryptCipher.doFinal(input);
-			return enrypByte;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	/**
 	 * 
-	 * 功能说明：对输入的字符串进行加密 参数及返回值:
+	 * @param input
+	 * @param key
+	 * @return
+	 * @throws Exception
 	 */
-	public static String encode(String input) {
-		try {
-			if (input == null || "".equals(input)) {
-				return input;
-			} else {
-				return byteArr2HexStr(encode(input.getBytes()));
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return input;
+	private static byte[] encode(byte[] input) throws Exception {
+		return encryptCipher.doFinal(input);
 	}
 
 	/**
 	 * 
 	 * 功能说明：将字节转换成字符串 参数及返回值:
+	 * 
+	 * @return
+	 * @throws BmException
 	 */
 	private static String byteArr2HexStr(byte[] arrB) {
 		int iLen = arrB.length;
@@ -199,6 +234,9 @@ public class EncryptionUtil {
 	/**
 	 * 
 	 * 功能说明：将字符串转换成字节 参数及返回值:
+	 * 
+	 * @return
+	 * @throws BmException
 	 */
 	private static byte[] hexStr2ByteArr(String strIn) {
 		byte[] arrB = strIn.getBytes();
@@ -212,31 +250,54 @@ public class EncryptionUtil {
 		return arrOut;
 	}
 
-	/**
-	 * md5加密
-	 * @param password
-	 */
-	public static String md5(String password) {
-		if (password == null) {
-			return null;
-		}
-		try {
-			byte[] temp = password.getBytes();
-			MessageDigest digest = MessageDigest.getInstance("MD5");
-			digest.update(temp);
+	// ===========================================AES对称加密解密算法==============================================
 
-			byte[] md = digest.digest();
-			int length = md.length;
-			char buffer[] = new char[length * 2];
-			int k = 0;
-			for (int i = 0; i < length; i++) {
-				byte byte0 = md[i];
-				buffer[k++] = hexDigits[byte0 >>> 4 & 0xf];
-				buffer[k++] = hexDigits[byte0 & 0xf];
-			}
-			return new String(buffer);
-		} catch (Exception e) {
-			return null;
+	/**
+	 * AES解密
+	 */
+	public static String aesEncrypt(String sSrc, String sKey, String sIv) throws Exception {
+		if (sKey == null) {
+			throw new BusinessException(CommonStateEnum.BADREQ_PARA);
 		}
+		// 判断Key是否为16位
+		if (sKey.length() != 16) {
+			throw new BusinessException(CommonStateEnum.BADREQ_PARA);
+		}
+		byte[] raw = sKey.getBytes();
+		SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");// "算法/模式/补码方式"
+		IvParameterSpec iv = new IvParameterSpec(sIv.getBytes());// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
+		cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+		byte[] encrypted = cipher.doFinal(sSrc.getBytes());
+
+		return new BASE64Encoder().encode(encrypted);// 此处使用BASE64做转码功能，同时能起到2次加密的作用。
+	}
+
+	/**
+	 * AES解密
+	 */
+	public static String aesDecrypt(String sSrc, String sKey, String sIv) throws Exception {
+		// 判断Key是否正确
+		if (sKey == null) {
+			throw new BusinessException(CommonStateEnum.BADREQ_PARA);
+		}
+		// 判断Key是否为16位
+		if (sKey.length() != 16) {
+			throw new BusinessException(CommonStateEnum.BADREQ_PARA);
+		}
+		byte[] raw = sKey.getBytes("ASCII");
+		SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		IvParameterSpec iv = new IvParameterSpec(sIv.getBytes());
+		System.out.println();
+		cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
+		byte[] encrypted1 = new BASE64Decoder().decodeBuffer(sSrc);// 先用base64解密
+		byte[] original = cipher.doFinal(encrypted1);
+		String originalString = new String(original);
+		return originalString;
+	}
+
+	public static void main(String[] args) throws Exception {
+		System.out.println(encode("123465"));
 	}
 }
