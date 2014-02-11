@@ -10,10 +10,10 @@ import java.io.Serializable;
  *  版本：1.0
  */
 public class IP implements Serializable {
-	private Long t;// IP段结束 表from_number
 	private Long id;
-	private Long a_id;// 区ID area_id
-	private Long f;// IP段开始 表to_number
+	private Long f;// IP段开始 原始字段from_number
+	private Long t;// IP段结束 原始字段to_number
+	private Long a_id;// 区域ID area_id
 
 	public Long getT() {
 		return t;
