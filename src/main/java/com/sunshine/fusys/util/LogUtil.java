@@ -2,7 +2,7 @@ package com.sunshine.fusys.util;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2014-2-10 <br>
  * 功能描述： 日志工具类<br>
  */

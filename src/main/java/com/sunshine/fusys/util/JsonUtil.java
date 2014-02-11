@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2014-2-10 <br>
  * 功能描述： 处理json的工具类，负责json数据转换成java对象和java对象转换成json<br>
  */

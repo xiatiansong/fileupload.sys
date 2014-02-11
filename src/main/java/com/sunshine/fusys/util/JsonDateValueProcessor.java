@@ -7,7 +7,7 @@ import net.sf.json.JsonConfig;
 import net.sf.json.processors.JsonValueProcessor;
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2014-2-10 <br>
  * 功能描述：JSON格式转换类 <br>
  */

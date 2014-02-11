@@ -15,7 +15,7 @@ import com.sunshine.fusys.util.PropertiesUtil;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-8-7 <br>
  * 功能描述：配置文件加载的 基类,
  * 注意:若项目要加载HttpUtil类的getUrl或sendGetRequest(参数isAddMd5ToUrl为true)方法时,<br>
@@ -86,7 +86,7 @@ public abstract class BaseConfig {
 	 * @param filePath
 	 * @param baseConfig
 	 *            void
-	 * @author 夏天松
+	 * @author fantasy
 	 * @date 2013-9-23
 	 */
 	protected static void reloadValue(String filePath, BaseConfig baseConfig) {

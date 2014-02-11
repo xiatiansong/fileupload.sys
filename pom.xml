@@ -214,7 +214,19 @@
 			<artifactId>commons-net</artifactId>
 			<version>3.2</version>
 		</dependency>
-
+		
+		<!-- memcached -->	
+		<dependency>
+			<groupId>com.google.code.simple-spring-memcached</groupId>
+			<artifactId>spring-cache</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.simple-spring-memcached</groupId>
+			<artifactId>spymemcached-provider</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		
 		<!-- commons configuration -->
 		<dependency>
 			<groupId>commons-configuration</groupId>

@@ -22,7 +22,7 @@ import com.sunshine.fusys.exception.BusinessException;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2014-2-10 <br>
  * 功能描述： 提供各种加密功能<br>
  */

@@ -5,7 +5,7 @@ import net.sf.json.JSONObject;
 
 /**
  * 
- * 创建人：夏天松<br>
+ * 创建人：fantasy<br>
  * 创建时间：2013-3-25 <br>
  * 功能描述： 公共状态<br>
  */

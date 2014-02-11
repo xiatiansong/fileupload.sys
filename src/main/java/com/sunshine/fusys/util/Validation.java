@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2014-2-10 <br>
  * 功能描述：验证类 ，提供常用的转型 <br>
  */

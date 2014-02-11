@@ -2,7 +2,7 @@ package com.sunshine.fusys.common;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-12-3 <br>
  * 功能描述： 常量类<br>
  */

@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 /**
-* 创建人：夏天松
+* 创建人：fantasy
 * 创建时间:2013/3/13
 * 功能描述:时间工具类
 */
@@ -181,7 +181,7 @@ public class DateTime {
      * @param dateFrom
      * @param dateEnd
      * @return int
-     * @author 夏天松 
+     * @author fantasy 
      * @date 2013-11-6
      */
     public static int getDaysBetweenTwoTimes(Object dateFrom, Object dateEnd) {

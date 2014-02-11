@@ -2,7 +2,7 @@ package com.sunshine.fusys.common;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-9-11 <br>
  * 功能描述：加载constant.properties配置 <br>
  * 
@@ -23,7 +23,7 @@ public class FusysConfig extends BaseConfig {
 	/**
 	 * 重新加载配置
 	 * 
-	 * @author 夏天松
+	 * @author fantasy
 	 * @date 2013-9-23
 	 */
 	public static void reloadValue() {

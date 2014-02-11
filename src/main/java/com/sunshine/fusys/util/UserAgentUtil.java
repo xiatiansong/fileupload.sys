@@ -9,7 +9,7 @@ import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2014-2-10 <br>
  * 功能描述： 浏览器版本识别<br>
  */
@@ -21,7 +21,7 @@ public class UserAgentUtil {
 	 * @param request
 	 * @param fileName
 	 * @return String
-	 * @author 夏天松
+	 * @author fantasy
 	 * @date 2014-1-9
 	 */
 	public static String encodeFileName(HttpServletRequest request, String fileName) {

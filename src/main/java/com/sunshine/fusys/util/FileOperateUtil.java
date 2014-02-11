@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-12-10 <br>
  * 功能描述：文件上传下载Util <br>
  */
@@ -118,7 +118,7 @@ public class FileOperateUtil {
 	 * @param filePath
 	 * @param fileName
 	 * @throws Exception void
-	 * @author 夏天松 
+	 * @author fantasy 
 	 * @date 2013-12-10
 	 */
 	public static void download(HttpServletRequest request,

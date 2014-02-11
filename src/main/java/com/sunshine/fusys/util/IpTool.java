@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2014-2-10 <br>
  * 功能描述：IP操作工具类 <br>
  */
@@ -106,7 +106,7 @@ public class IpTool {
 	 * @param sourceIp
 	 * @param ipArray
 	 * @return boolean
-	 * @author 夏天松 
+	 * @author fantasy 
 	 * @date 2013-12-9
 	 */
 	public static boolean isInIpArray(String sourceIp , String[] ipArray){

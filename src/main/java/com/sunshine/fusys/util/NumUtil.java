@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 
 /**
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-8-27 <br>
  * 功能描述： 处理数字的Util、计算百分比<br>
  */
@@ -15,7 +15,7 @@ public class NumUtil {
      *  
      * @param o
      * @return BigDecimal
-     * @author 夏天松 
+     * @author fantasy 
      * @date 2013-8-27
      */
     public static BigDecimal toBig(Object o) {
@@ -31,7 +31,7 @@ public class NumUtil {
      * @param divisor
      * @param dividend
      * @return String
-     * @author 夏天松 
+     * @author fantasy 
      * @date 2013-8-27
      */
     public static String getPercent(Object divisor, Object dividend){
@@ -56,7 +56,7 @@ public class NumUtil {
      * @param divisor
      * @param dividend
      * @return String
-     * @author 夏天松 
+     * @author fantasy 
      * @date 2013-10-9
      */
     public static String divideNumber(Object divisor, Object dividend){
@@ -78,7 +78,7 @@ public class NumUtil {
      * @param divisor
      * @param dividend
      * @return int
-     * @author 夏天松 
+     * @author fantasy 
      * @date 2013-11-6
      */
     public static int averageNumber(Object divisor, Object dividend){

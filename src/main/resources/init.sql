@@ -20,3 +20,29 @@ CREATE TABLE `T_USER_FILE` (
   `REMARK` varchar(256) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户上传文件';
+
+CREATE TABLE `ip_area_dictionary` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT,
+  `from` varchar(16) NOT NULL,
+  `to` varchar(16) NOT NULL,
+  `country` varchar(30) NOT NULL,
+  `area` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `area_id` bigint(20) DEFAULT NULL,
+  `from_number` bigint(20) DEFAULT NULL,
+  `to_number` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_from` (`from`),
+  KEY `idx_to` (`to`),
+  KEY `idx_from_to` (`from`,`to`) USING BTREE,
+  KEY `idx_from_to_number` (`from_number`,`to_number`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=441688 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `ip_dictionary` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ip_address` varchar(32) NOT NULL COMMENT 'IP地址',
+  `area_id` bigint(20) NOT NULL COMMENT '区域ID',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_ip_address` (`ip_address`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=12732427 DEFAULT CHARSET=utf8;

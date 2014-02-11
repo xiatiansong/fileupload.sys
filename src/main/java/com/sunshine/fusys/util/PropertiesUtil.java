@@ -7,7 +7,7 @@ import java.util.Properties;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-8-7 <br>
  * 功能描述：处理Properties的常用方法 <br>
  * 版本： <br>

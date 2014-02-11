@@ -37,7 +37,7 @@ import com.sunshine.fusys.util.StringUtil;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-12-6 <br>
  * 功能描述： 用户文件上传下载和文件列表<br>
  */

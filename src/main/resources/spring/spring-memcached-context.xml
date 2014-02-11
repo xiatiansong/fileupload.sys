@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		   http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.1.xsd
+           http://www.springframework.org/schema/cache 
+           http://www.springframework.org/schema/cache/spring-cache-3.1.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<cache:annotation-driven />
+	<aop:aspectj-autoproxy />
+	<context:annotation-config />
+	<context:component-scan base-package="com.zqgame.anaylytics.services" />
+	
+	<!--配置和创建memcached数据源 -->
+	<context:property-placeholder location="classpath:memcached.properties" ignore-unresolvable="true" />
+
+	<bean name="cacheManager" class="com.google.code.ssm.spring.SSMCacheManager">
+		<property name="caches">
+			<set>
+				<bean class="com.google.code.ssm.spring.SSMCache">
+					<constructor-arg name="cache" index="0" ref="userCache" />
+					<!-- 5 minutes -->
+					<constructor-arg name="expiration" index="1" value="${expiration}" />
+					<!-- @CacheEvict(..., "allEntries" = true) doesn't work -->
+					<constructor-arg name="allowClear" index="2" value="${allowClear}" />
+				</bean>
+			</set>
+		</property>
+	</bean>
+
+	<!-- easy way to test different types of serialization mechanizm by passing 
+		it as system property (-Dssm.provider=JSON) -->
+	<bean name="defaultSerializationTypeAsString" class="java.lang.String">
+		<constructor-arg value="#{systemProperties['ssm.defaultSerializationType']?:'JSON'}" />
+	</bean>
+
+	<bean name="userCache" class="com.google.code.ssm.CacheFactory">
+		<!-- <property name="cacheName" value="userCache" /> -->
+		<property name="cacheClientFactory" ref="cacheClientFactory" />
+		<property name="addressProvider">
+			<bean class="com.google.code.ssm.config.DefaultAddressProvider">
+				<property name="address" value="${address}" />
+			</bean>
+		</property>
+		<property name="configuration">
+			<bean class="com.google.code.ssm.providers.CacheConfiguration">
+				<property name="consistentHashing" value="${consistentHashing}" />
+			</bean>
+		</property>
+		<property name="defaultSerializationType" value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
+	</bean>
+
+
+	<!-- flush all data from memcached before starting tests
+	<bean id="flushUserCache"  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="userCache" />
+		<property name="targetMethod" value="flush" />
+	</bean>
+	 -->
+	 
+	<bean name="cacheClientFactory" class="com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl" />
+	<bean class="com.google.code.ssm.Settings" name="setting">
+		<property name="order" value="${order}" />
+	</bean>
+</beans>

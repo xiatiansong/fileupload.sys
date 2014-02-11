@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Mybatis物理分页 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-3-13 <br>
  * 
  */

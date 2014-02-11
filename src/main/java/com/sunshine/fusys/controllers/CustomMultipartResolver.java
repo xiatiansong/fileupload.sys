@@ -20,7 +20,7 @@ import com.sunshine.fusys.listener.FileUploadProgressListener;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-12-6 <br>
  * 功能描述：文件上传Resolver <br>
  *

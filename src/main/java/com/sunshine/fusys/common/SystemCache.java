@@ -5,10 +5,10 @@ import java.util.Map;
 
 /**
  * 目前用于缓存
- * @author 夏天松
+ * @author fantasy
  */
 public class SystemCache {
-
+	public static final String IP_AREA_LIST = "IP_AREA_LIST";
 	private static Map<String, Object> map = new HashMap<String, Object>();
 
 	public static Object getCache(String key) {

@@ -14,7 +14,7 @@ import com.sunshine.fusys.common.ParsePagination;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-12-2 <br>
  * 功能描述： 分页拦截器<br>
  */

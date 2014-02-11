@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-8-8 <br>
  * 功能描述：cookie工具类 <br>
  */

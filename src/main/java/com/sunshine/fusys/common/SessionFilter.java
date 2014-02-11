@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * 登录请求拦截器，所有请求都将经过这里
- * 创建人：夏天松 <br>
+ * 创建人：fantasy <br>
  * 创建时间：2013-9-5 <br>
  */
 public class SessionFilter implements Filter {
