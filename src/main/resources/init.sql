@@ -22,22 +22,22 @@ CREATE TABLE `T_USER_FILE` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户上传文件';
 
 CREATE TABLE `ip_area_dictionary` (
-  `id` bigint(11) NOT NULL AUTO_INCREMENT,
-  `from` varchar(16) NOT NULL,
-  `to` varchar(16) NOT NULL,
-  `country` varchar(30) NOT NULL,
-  `area` varchar(50) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `area_id` bigint(20) DEFAULT NULL,
-  `from_number` bigint(20) DEFAULT NULL,
-  `to_number` bigint(20) DEFAULT NULL,
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `from` varchar(16) NOT NULL COMMENT '起始IP',
+  `to` varchar(16) NOT NULL COMMENT '结束IP',
+  `country` varchar(30) NOT NULL COMMENT '国家',
+  `area` varchar(50) NOT NULL COMMENT '区域',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',
+  `updated_at` timestamp NULL DEFAULT NULL COMMENT '更新日期',
+  `area_id` bigint(20) DEFAULT NULL COMMENT '区域ID',
+  `from_number` bigint(20) DEFAULT NULL COMMENT 'ip起始整数',
+  `to_number` bigint(20) DEFAULT NULL COMMENT 'ip结束整数',
   PRIMARY KEY (`id`),
   KEY `idx_from` (`from`),
   KEY `idx_to` (`to`),
   KEY `idx_from_to` (`from`,`to`) USING BTREE,
   KEY `idx_from_to_number` (`from_number`,`to_number`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=441688 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 CREATE TABLE `ip_dictionary` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -45,4 +45,20 @@ CREATE TABLE `ip_dictionary` (
   `area_id` bigint(20) NOT NULL COMMENT '区域ID',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_ip_address` (`ip_address`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=12732427 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+CREATE TABLE `area` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `country` varchar(32) NOT NULL COMMENT '国家',
+  `country_id` varchar(16) NOT NULL DEFAULT '' COMMENT '国家ID',
+  `area` varchar(32) DEFAULT NULL COMMENT '区域',
+  `area_id` varchar(16) DEFAULT NULL COMMENT '区域ID',
+  `region` varchar(32) DEFAULT NULL COMMENT '省份',
+  `region_id` varchar(16) DEFAULT NULL COMMENT '省份ID',
+  `city` varchar(32) DEFAULT NULL COMMENT '城市',
+  `city_id` varchar(16) DEFAULT NULL COMMENT '城市ID',
+  `isp` varchar(32) DEFAULT NULL COMMENT '运营商',
+  `isp_id` varchar(16) DEFAULT NULL COMMENT '运营商ID',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uidx_area` (`country_id`,`area_id`,`region_id`,`city_id`,`isp_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
