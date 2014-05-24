@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunshine.fusys.mappers.UserFileDao">
+	
+	<!-- 文件 -->
+	<resultMap type="userFileDTO" id="queryUserFileResult">
+		<result property="id" column="ID" />
+		<result property="userId" column="USER_ID" />
+		<result property="operateTime" column="OPERATE_TIME" />
+		<result property="ipAddress" column="IP_ADDRESS" />
+		<result property="fileName" column="FILE_NAME" />
+		<result property="fileSize" column="FILE_SIZE" />
+		<result property="filePath" column="FILE_PATH" />
+		<result property="uploadType" column="UPLOAD_TYPE" />
+		<result property="remark" column="REMARK" />
+	</resultMap>
+	
+	<!-- 新增 -->
+	<insert id="save" parameterType="userFileDTO">
+	  <![CDATA[ 
+			INSERT INTO T_USER_FILE(
+       			ID,
+       			USER_ID,
+       			OPERATE_TIME,
+       			IP_ADDRESS,
+       			FILE_NAME,
+       			FILE_SIZE,
+       			FILE_PATH,
+       			UPLOAD_TYPE,
+       			REMARK
+       		)
+	    	VALUES(
+	    		DEFAULT,
+	    		#{userFile.userId},
+				#{userFile.operateTime},
+				#{userFile.ipAddress}, 
+				#{userFile.fileName}, 
+				#{userFile.fileSize}, 
+				#{userFile.filePath}, 
+				#{userFile.uploadType},
+				#{userFile.remark}
+			)
+		 ]]>
+		<selectKey keyProperty="userFile.id" resultType="Long" order="AFTER">
+			select LAST_INSERT_ID() AS ID
+		</selectKey>
+	</insert>
+
+	<!-- 根据条件查询用户上传文件列表 -->
+	<select id="find" parameterType="java.util.Map" resultMap="queryUserFileResult">
+		<![CDATA[ 
+			SELECT tuf.*
+			FROM T_USER_FILE tuf
+   		    WHERE 1 = 1 
+   			 ]]>
+   			 <if test="file_id != null and file_id != 0">
+	   			<![CDATA[
+	   				AND tuf.ID = #{file_id}
+	   			]]>
+			</if>
+			<if test="user_id != null and user_id != 0">
+	   			<![CDATA[
+	   				AND tuf.USER_ID = #{user_id}
+	   			]]>
+			</if>
+			<if test="file_name != null and file_name != ''">
+	   			<![CDATA[
+	   				AND tuf.FILE_NAME LIKE '%${file_name}%'
+	   			]]>
+			</if>
+			<if test="upload_type != null  and upload_type != 0">
+	   			<![CDATA[
+	   				AND tuf.UPLOAD_TYPE = #{upload_type}
+	   			]]>
+			</if>
+			<if test="start_time != null and start_time !='' ">
+   				<![CDATA[
+   					AND tuf.OPERATE_TIME >= #{start_time}
+   				]]>
+			</if>
+			<if test="end_time != null and end_time !='' ">
+	   			<![CDATA[
+	   				AND tuf.OPERATE_TIME <= #{end_time}
+	   			]]>
+			</if>
+			<![CDATA[
+				ORDER BY  tuf.OPERATE_TIME DESC
+			]]>
+	</select>
+	
+	<!-- 根据条件查询用户上传文件列表 -->
+	<select id="findPage" parameterType="java.util.Map" resultMap="queryUserFileResult">
+		<![CDATA[ 
+			SELECT tuf.*
+			FROM T_USER_FILE tuf
+   		    WHERE 1 = 1 
+   			 ]]>
+   			 <if test="file_id != null and file_id != 0">
+	   			<![CDATA[
+	   				AND tuf.ID = #{file_id}
+	   			]]>
+			</if>
+			<if test="user_id != null and user_id != 0">
+	   			<![CDATA[
+	   				AND tuf.USER_ID = #{user_id}
+	   			]]>
+			</if>
+			<if test="file_name != null and file_name != ''">
+	   			<![CDATA[
+	   				AND tuf.FILE_NAME LIKE '%${file_name}%'
+	   			]]>
+			</if>
+			<if test="upload_type != null  and upload_type != 0">
+	   			<![CDATA[
+	   				AND tuf.UPLOAD_TYPE = #{upload_type}
+	   			]]>
+			</if>
+			<if test="start_time != null and start_time !='' ">
+   				<![CDATA[
+   					AND tuf.OPERATE_TIME >= #{start_time}
+   				]]>
+			</if>
+			<if test="end_time != null and end_time !='' ">
+	   			<![CDATA[
+	   				AND tuf.OPERATE_TIME <= #{end_time}
+	   			]]>
+			</if>
+			<![CDATA[
+				ORDER BY  tuf.OPERATE_TIME DESC
+			]]>
+	</select>
+</mapper>

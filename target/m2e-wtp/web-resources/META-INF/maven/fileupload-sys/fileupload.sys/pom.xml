@@ -17,7 +17,7 @@
 		<org.mybatis.version>3.2.2</org.mybatis.version>
 		<org.mybatis.spring.version>1.0.2</org.mybatis.spring.version>
 	</properties>
-	
+
 	<dependencies>
 		<!-- Spring -->
 		<dependency>
@@ -123,6 +123,12 @@
 			<type>jar</type>
 		</dependency>
 
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.20</version>
+		</dependency>
+
 		<!-- Servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -203,7 +209,24 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.7</version>
 		</dependency>
-
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>3.2</version>
+		</dependency>
+		
+		<!-- memcached -->	
+		<dependency>
+			<groupId>com.google.code.simple-spring-memcached</groupId>
+			<artifactId>spring-cache</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.simple-spring-memcached</groupId>
+			<artifactId>spymemcached-provider</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		
 		<!-- commons configuration -->
 		<dependency>
 			<groupId>commons-configuration</groupId>
@@ -235,12 +258,14 @@
 			<version>3.1.2.RELEASE</version>
 			<type>jar</type>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>org.noo</groupId>
 			<artifactId>mybatis-paging</artifactId>
 			<version>0.1</version>
 			<type>jar</type>
 		</dependency>
+		 -->
 	</dependencies>
 	<repositories>
 		<!-- For JSR 303 Validation - Hibernat Validator -->
